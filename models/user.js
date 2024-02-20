@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const bcrypt = require("bcrypt");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -13,12 +14,54 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  User.init({
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'User',
+  User.init(
+    {
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: {
+          args: true,
+          msg: "Email already exists",
+        },
+        validate: {
+          isEmail: {
+            args: true,
+            msg: "Invalid email format",
+          },
+          notNull: {
+            args: true,
+            msg: "Email is required",
+          },
+          notEmpty: {
+            args: true,
+            msg: "Email is required",
+          },
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: "Password is required",
+          },
+          notEmpty: {
+            args: true,
+            msg: "Password is required",
+          },
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "User",
+    }
+  );
+
+  User.beforeCreate((user, options) => {
+    console.log("Before create user", user);
+    user.password = bcrypt.hashSync(user.password, 10);
   });
   return User;
 };
