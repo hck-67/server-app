@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("Hello World.");
 });
 
 app.post("/login", async (req, res) => {
